@@ -160,7 +160,6 @@ class LocalCommands(object):
         docker_helper = DockerHelper(
             self.cli_config.get_project_shortname(),
             local=True)
-        """Stop containers"""
         docker_helper.stop_containers()
         """Destroy containers"""
         docker_helper.destroy_containers()
