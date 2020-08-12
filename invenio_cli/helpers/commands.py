@@ -154,10 +154,7 @@ class LocalCommands(object):
     
     def destroy(self):
         """Destroys env, containers."""
-        command = [
-            'pipenv', '--rm'
-            ]
-        subprocess.run(command, check=True)
+        subprocess.run(['pipenv', '--rm'], check=True)
         click.secho('Destroyed Venv...', fg='green')
 
         docker_helper = DockerHelper(
