@@ -165,7 +165,7 @@ class LocalCommands(object):
         docker_helper.destroy_containers()
         click.secho('Destroyed containers...', fg='green')
 
-    def services(self, force, remove):
+    def services(self, force):
         """Local start of containers (services).
 
         NOTE: We use check=True to mimic set -e from original setup script
