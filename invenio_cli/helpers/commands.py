@@ -151,8 +151,25 @@ class LocalCommands(object):
         docker_helper.start_containers()
         # TODO: Find faster way to procede when containers are ready
         time.sleep(30)  # Give time to the containers to start properly
+    
+    def destroy(self):
+        """Destroys env, containers."""
+        command = [
+            'pipenv', '--rm'
+            ]
+        subprocess.run(command, check=True)
+        click.secho('Destroyed Venv...', fg='green')
 
-    def services(self, force):
+        docker_helper = DockerHelper(
+            self.cli_config.get_project_shortname(),
+            local=True)
+        """Stop containers"""
+        docker_helper.stop_containers()
+        """Destroy containers"""
+        docker_helper.destroy_containers()
+        click.secho('Destroyed containers...', fg='green')
+
+    def services(self, force, remove):
         """Local start of containers (services).
 
         NOTE: We use check=True to mimic set -e from original setup script

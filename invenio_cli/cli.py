@@ -144,9 +144,11 @@ def update(install_js):
               help='Which environment to build, it defaults to local')
 @click.option('--verbose', default=False, is_flag=True, required=False,
               help='Verbose mode will show all logs in the console.')
-def destroy(local, verbose):
+def destroy(local, verbose, remove):
     """Removes all associated resources (containers, images, volumes)."""
-    click.secho('TODO: Revisit destroy command', fg='red')
+    cli_config = CLIConfig()
+    commands = LocalCommands(cli_config)
+    commands.destroy()
 
 
 @cli.command()
