@@ -154,8 +154,12 @@ class LocalCommands(object):
     
     def destroy(self):
         """Destroys env, containers."""
-        subprocess.run(['pipenv', '--rm'], check=True)
-        click.secho('Virtual environment destroyed', fg='green')
+        try:
+            subprocess.run(['pipenv', '--rm'], check=True)
+            click.secho('Virtual environment destroyed', fg='green')
+
+        except:
+            pass
 
         docker_helper = DockerHelper(
             self.cli_config.get_project_shortname(),
