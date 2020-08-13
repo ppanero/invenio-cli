@@ -86,7 +86,6 @@ class DockerHelper(object):
 
     def destroy_containers(self):
         """Stop and remove all containers, volumes and images."""
-
         command = ['docker-compose', '--file', 'docker-compose.full.yml',
                    'down', '--volumes']
         if self.local:
