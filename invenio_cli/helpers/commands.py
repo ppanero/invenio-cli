@@ -161,7 +161,7 @@ class LocalCommands(object):
             self.cli_config.get_project_shortname(),
             local=True)
         docker_helper.stop_containers()
-        """Destroy containers"""
+        self.cli_config.update_services_setup(False)
         docker_helper.destroy_containers()
         click.secho('Destroyed containers...', fg='green')
 
