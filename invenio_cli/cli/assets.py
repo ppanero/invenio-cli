@@ -1,0 +1,88 @@
+# -*- coding: utf-8 -*-
+#
+# Copyright (C) 2020 CERN.
+#
+# Invenio-Cli is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+
+"""Invenio module to ease the creation and management of applications."""
+
+import click
+from click_default_group import DefaultGroup
+
+from ..commands import AssetsCommands
+from .utils import pass_cli_config, run_steps
+
+
+@click.group()
+def assets():
+    """Statics and assets management commands."""
+
+
+@assets.command()
+@click.option('--force', '-f', default=False, is_flag=True,
+              help='Force the full recreation the assets and statics.')
+@click.option(
+    '--production/--development', '-p/-d', default=True, is_flag=True,
+    help='Production mode copies files. Development mode symlinks files.'
+)
+@pass_cli_config
+def update(cli_config, force, production):
+    """Updates the current application static/assets files."""
+    commands = AssetsCommands(cli_config)
+    commands.update_statics_and_assets(
+        force=force,
+        flask_env='production' if production else 'development'
+    )
+
+
+@assets.command()
+@click.argument('path', type=click.Path(exists=True))
+@pass_cli_config
+def install(cli_config, path):
+    """Install and link a React module."""
+    commands = AssetsCommands(cli_config)
+
+    click.secho("Installing React module...", fg="green")
+    steps = commands.link_js_module(path)
+    on_fail = "Failed to install React module."
+    on_success = "React module installed successfully."
+
+    run_steps(steps, on_fail, on_success)
+
+
+@click.group(cls=DefaultGroup, default='assets', default_if_no_args=True)
+def watch():
+    """Statics and assets watch commands."""
+
+
+@watch.command('assets')
+@pass_cli_config
+def watch_assets(cli_config):
+    """Watch assets files for changes and rebuild - default for watch.
+
+    This is the default behaviour when calling `invenio-cli assets watch`.
+    """
+    commands = AssetsCommands(cli_config)
+    commands.watch_assets()
+
+
+@watch.command('module')
+@click.option('--link', '-l', default=False, is_flag=True,
+              help='Link the module.')
+@click.argument('path', type=click.Path(exists=True))
+@pass_cli_config
+def watch_module(cli_config, path, link):
+    """Watch a React module."""
+    commands = AssetsCommands(cli_config)
+    click.secho("Watching React module...", fg="green")
+    steps = commands.watch_js_module(path, link=link)
+    on_fail = "Failed set watcher on React module."
+    on_success = "Finished watching React module."
+
+    run_steps(steps, on_fail, on_success)
+
+
+# NOTE: In order to obtain something like
+# invenio-cli assets watch [assets | module <path>]
+assets.add_command(watch)
